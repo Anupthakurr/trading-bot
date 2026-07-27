@@ -222,9 +222,10 @@ The framework includes 4 built-in strategy engines mapped in `framework/strategi
 
 ## 📈 Performance Metrics
 
-The engine calculates **13+ professional quantitative metrics**, outputted perfectly formatted to the terminal and JSON:
+The engine calculates **15+ professional quantitative metrics**, outputted perfectly formatted to the terminal and JSON:
 - **Returns**: Total Return, Annualized Return, Buy & Hold Return.
 - **Risk-Adjusted**: Sharpe Ratio, Sortino Ratio, Calmar Ratio.
+- **Market Comparison**: Jensen's Alpha, Beta (automatically fetched vs SPY benchmark).
 - **Trade Stats**: Win Rate, Average Profit/Loss, Expectancy, Profit Factor.
 - **Drawdown**: Maximum Drawdown (calculated peak-to-trough dynamically).
 
