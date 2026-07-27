@@ -1,6 +1,6 @@
 <div align="center">
   <h1>📈 QuantEngine Trading Bot</h1>
-  <p><strong>A professional, modular, and production-ready backtesting & optimization framework for quantitative trading.</strong></p>
+  <p><strong>A professional, modular, and production-ready backtesting & live-execution framework for quantitative trading.</strong></p>
 
   [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
   [![React](https://img.shields.io/badge/React-19.2-blue?logo=react)](https://reactjs.org/)
@@ -25,6 +25,7 @@
   - [1. Backtesting](#1-backtesting)
   - [2. Optimization](#2-optimization)
   - [3. Reporting](#3-reporting)
+- [Web Dashboard Usage](#️-web-dashboard-usage)
 - [Trading Strategies](#-trading-strategies)
 - [Performance Metrics](#-performance-metrics)
 
@@ -32,9 +33,9 @@
 
 ## 🌟 About the Project
 
-**QuantEngine** is a fully customized trading bot architecture featuring a professional backtesting framework and a modern web interface. 
+**QuantEngine** is a fully customized trading bot architecture featuring a professional backtesting framework, a **production-ready live trading engine**, and a modern web interface. 
 
-It solves common algorithmic trading pitfalls like **look-ahead bias** and **curve-fitting** by enforcing a strictly chronological, bar-by-bar backtesting engine and providing advanced walk-forward optimization analysis.
+It solves common algorithmic trading pitfalls like **look-ahead bias** and **curve-fitting** by enforcing a strictly chronological, bar-by-bar backtesting engine and providing advanced walk-forward optimization analysis. Moreover, it seamlessly transitions profitable strategies into live execution via direct broker integration.
 
 ---
 
@@ -44,10 +45,10 @@ The project is split into a robust Python engine and a highly responsive React d
 
 ### **Backend (Algorithmic Engine)**
 * **Language:** Python 3.9+
-* **Data Retrieval:** `yfinance`
-* **Data Processing:** `pandas`, `scipy`
-* **Visualization:** `matplotlib`, `seaborn`
-* **Configuration:** `pyyaml`, Dataclasses
+* **Data Retrieval:** `yfinance`, SmartAPI (Angel One)
+* **Data Processing:** `pandas`, `scipy`, `pytz`
+* **Execution/Broker:** Custom Adapter architecture (Mock & Angel One supported)
+* **Configuration:** `pyyaml`, Dataclasses, `.env`
 * **Testing:** `pytest` (54-test suite guaranteeing execution accuracy)
 
 ### **Frontend (Analytics Dashboard)**
@@ -64,17 +65,18 @@ The project is split into a robust Python engine and a highly responsive React d
 
 ```mermaid
 graph TD
-    A[Data Provider / yFinance] -->|OHLCV Data| B(Data Cache)
-    B --> C[Backtest Engine]
+    A[Data Provider / yFinance / SmartAPI] -->|OHLCV / Ticks| B(Data Cache)
+    B --> C[Backtest Engine / Live Engine]
     
     subgraph QuantEngine Core
     C -->|Current Bar| D[Strategy Logic V1-V4]
     D -->|Buy/Sell Signals| E[Execution Module]
-    E -->|Fills/Slippage/Fees| F[Portfolio Tracker]
+    E -.->|Live Orders| B1[Angel One Broker]
+    E -.->|Simulated Fills| F[Portfolio Tracker]
     end
     
     F --> G[Metrics Calculator]
-    G --> H((JSON/CSV Reports))
+    G --> H((JSON/CSV Reports / SQLite DB))
     G --> I((Matplotlib Charts))
     
     H --> J[React Frontend Dashboard]
@@ -86,9 +88,10 @@ graph TD
 
 - 🛡️ **Zero Look-Ahead Bias**: Replays historical data chronologically. Calculates indicators strictly on historical bounds.
 - 💱 **Realistic Execution**: Incorporates percentage-based commission fees, dynamic slippage simulation, and exact mid-bar Stop-Loss/Take-Profit triggers.
+- 🚀 **End-to-End Live Trading**: Connects directly to **Angel One API** via TOTP authentication to execute real market orders.
+- 🚦 **Robust Guardrails**: Built-in protections including **Max Daily Loss** circuits, **Market Hour** constraints (NSE), state synchronization on crashes, and dynamic ATR Trailing Stops.
 - 🧪 **Advanced Optimization**: Exhaustive Grid Search, large-space Random Search, and rigorous **Walk-Forward Analysis** to detect and prevent overfitting.
-- 🌪️ **Robustness Testing**: Built-in Monte Carlo simulations (trade order shuffling) and parameter Sensitivity Analysis.
-- 📊 **Beautiful Visualization**: Generates 6 bespoke chart types (Equity Curve, Drawdown, Trade Distribution, Monthly Returns Heatmap, Price Signals, and a full Dashboard).
+- 📊 **Beautiful Visualization**: Generates bespoke chart types (Equity Curve, Drawdown, Monthly Returns Heatmap) and provides a full live-monitoring Dashboard.
 
 ---
 
@@ -118,14 +121,18 @@ Follow these instructions to get a copy of the project up and running on your lo
    pip install -r requirements.txt
    ```
 
-4. **Verify Installation** (Run the test suite)
-   ```bash
-   pytest framework/tests/ -v
+4. **Environment Configuration (For Live Trading)**
+   Copy `backend/.env.example` to `backend/.env` and fill in your Angel One API credentials:
+   ```env
+   ANGELONE_API_KEY=your_actual_api_key_here
+   ANGELONE_CLIENT_CODE=your_actual_client_code_here
+   ANGELONE_PASSWORD=your_actual_password_here
+   ANGELONE_TOTP_SECRET=your_actual_totp_secret_here
    ```
 
 5. **Start the API Server** (Required for the frontend dashboard)
    ```bash
-   python main.py
+   python -m uvicorn main:app --reload
    ```
 
 ### Frontend Setup
@@ -199,21 +206,15 @@ python report.py --compare results/AAPL_v3_1D results/AAPL_v4_1D
 
 ## 🖥️ Web Dashboard Usage
 
-QuantEngine features a modern React-based frontend that provides a beautiful, interactive analytics dashboard.
+QuantEngine features a modern React-based frontend that provides a beautiful, interactive analytics dashboard and full live-trading controls.
 
 ### 1. Starting the Application
-Make sure you have the frontend development server running (and backend API if applicable).
-- **Frontend Server:** 
-  ```bash
-  cd frontend
-  npm run dev
-  ```
-- Open `http://localhost:5173` (or the port provided by Vite) in your browser.
+Make sure you have both the backend (`uvicorn`) and frontend (`npm run dev`) running. Open `http://localhost:5173`.
 
-### 2. Using the Dashboard
-- **Control Panel:** Use the left sidebar to configure your backtest. Select the trading asset (e.g., AAPL, BTC-USD), timeframe (1D, 1h), and strategy (V1–V4). Adjust the date range and click **Run Backtest** to simulate the strategy.
-- **Interactive Equity Chart:** The main view plots your equity curve over time, allowing you to hover, zoom, and inspect your portfolio's performance dynamically.
-- **Performance Metrics:** The top dashboard bar displays real-time calculated KPIs such as your Total Return %, Win Rate, Profit Factor, and Maximum Drawdown.
+### 2. Live Trading Dashboard
+- **Engine Controls:** Select your broker (Mock Paper Trading vs Angel One Live), input your ticker, choose a strategy, and set your risk threshold.
+- **Active Monitoring:** The dashboard streams real-time state from your backend SQLite database, displaying Open Positions, P&L, Order History, and Account Balance.
+- **Activity Log:** A live terminal feed streams every execution event, rejection reason, and tick logic evaluation directly to your browser.
 
 ---
 
