@@ -189,6 +189,26 @@ python report.py --compare results/AAPL_v3_1D results/AAPL_v4_1D
 
 ---
 
+## 🖥️ Web Dashboard Usage
+
+QuantEngine features a modern React-based frontend that provides a beautiful, interactive analytics dashboard.
+
+### 1. Starting the Application
+Make sure you have the frontend development server running (and backend API if applicable).
+- **Frontend Server:** 
+  ```bash
+  cd frontend
+  npm run dev
+  ```
+- Open `http://localhost:5173` (or the port provided by Vite) in your browser.
+
+### 2. Using the Dashboard
+- **Control Panel:** Use the left sidebar to configure your backtest. Select the trading asset (e.g., AAPL, BTC-USD), timeframe (1D, 1h), and strategy (V1–V4). Adjust the date range and click **Run Backtest** to simulate the strategy.
+- **Interactive Equity Chart:** The main view plots your equity curve over time, allowing you to hover, zoom, and inspect your portfolio's performance dynamically.
+- **Performance Metrics:** The top dashboard bar displays real-time calculated KPIs such as your Total Return %, Win Rate, Profit Factor, and Maximum Drawdown.
+
+---
+
 ## 🧠 Trading Strategies
 
 The framework includes 4 built-in strategy engines mapped in `framework/strategies/`:
