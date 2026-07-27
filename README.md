@@ -6,6 +6,9 @@
   [![React](https://img.shields.io/badge/React-19.2-blue?logo=react)](https://reactjs.org/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?logo=typescript)](https://www.typescriptlang.org/)
   [![License](https://img.shields.io/badge/License-Proprietary-red.svg)]()
+
+  <br />
+  <img src="assets/dashboard.png" alt="QuantEngine Dashboard" width="800"/>
 </div>
 
 ---
@@ -120,6 +123,11 @@ Follow these instructions to get a copy of the project up and running on your lo
    pytest framework/tests/ -v
    ```
 
+5. **Start the API Server** (Required for the frontend dashboard)
+   ```bash
+   python main.py
+   ```
+
 ### Frontend Setup
 
 1. **Navigate to the frontend directory**
@@ -225,7 +233,7 @@ The framework includes 4 built-in strategy engines mapped in `framework/strategi
 The engine calculates **15+ professional quantitative metrics**, outputted perfectly formatted to the terminal and JSON:
 - **Returns**: Total Return, Annualized Return, Buy & Hold Return.
 - **Risk-Adjusted**: Sharpe Ratio, Sortino Ratio, Calmar Ratio.
-- **Market Comparison**: Jensen's Alpha, Beta (automatically fetched vs SPY benchmark).
+- **Market Comparison**: Jensen's Alpha, Beta (automatically fetched vs SPY benchmark via `yfinance`).
 - **Trade Stats**: Win Rate, Average Profit/Loss, Expectancy, Profit Factor.
 - **Drawdown**: Maximum Drawdown (calculated peak-to-trough dynamically).
 

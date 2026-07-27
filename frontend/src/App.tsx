@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { Activity, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
 import { ControlPanel } from './components/ControlPanel';
