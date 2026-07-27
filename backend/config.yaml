@@ -1,0 +1,110 @@
+# ============================================================
+# QuantEngine Backtesting Framework — Master Configuration
+# ============================================================
+
+# ── General ──────────────────────────────────────────────────
+general:
+  initial_capital: 100000.0
+  currency: USD
+  log_level: INFO          # DEBUG, INFO, WARNING, ERROR
+  output_dir: results      # Relative to backend/
+  data_cache_dir: data_cache
+
+# ── Data ─────────────────────────────────────────────────────
+data:
+  default_symbols:
+    - AAPL
+    - MSFT
+    - SPY
+  default_timeframe: 1D    # 5m, 15m, 1h, 4h, 1D
+  default_start: "2022-01-01"
+  default_end: "2024-12-31"
+  cache_ttl_hours: 24      # Re-download if cache older than this
+  provider: yfinance        # yfinance or ccxt
+
+# ── Execution ────────────────────────────────────────────────
+execution:
+  commission_pct: 0.001     # 0.1% per trade (taker fee)
+  slippage_pct: 0.0005      # 0.05% average slippage
+  slippage_model: fixed     # fixed or random
+  max_position_pct: 1.0     # Max % of capital in a single position
+
+# ── Strategy Defaults ────────────────────────────────────────
+strategies:
+  v1:
+    short_window: 20
+    long_window: 50
+
+  v2:
+    short_window: 20
+    long_window: 50
+    rsi_period: 14
+    rsi_overbought: 70
+
+  v3:
+    short_window: 20
+    long_window: 50
+    rsi_period: 14
+    rsi_overbought: 70
+    atr_period: 14
+    atr_multiplier: 2.0
+    risk_per_trade: 0.01
+
+  v4:
+    fast_ema: 12
+    slow_ema: 26
+    rsi_period: 14
+    rsi_overbought: 70
+    macd_fast: 12
+    macd_slow: 26
+    macd_signal: 9
+    atr_period: 14
+    atr_multiplier: 2.5
+    volume_ma: 20
+    risk_per_trade: 0.01
+
+# ── Optimization ─────────────────────────────────────────────
+optimization:
+  method: grid              # grid or random
+  random_iterations: 500    # Only for random search
+  rank_by: sharpe_ratio     # sharpe_ratio or profit_factor
+  top_n: 10                 # Number of top results to show
+
+  param_grids:
+    v3:
+      short_window: [10, 15, 20, 25]
+      long_window: [30, 40, 50, 60]
+      rsi_period: [10, 14, 20]
+      atr_multiplier: [1.5, 2.0, 2.5, 3.0]
+      risk_per_trade: [0.005, 0.01, 0.02]
+
+    v4:
+      fast_ema: [8, 10, 12, 15, 20]
+      slow_ema: [20, 26, 30, 40, 50]
+      rsi_period: [10, 14, 20]
+      rsi_overbought: [65, 70, 75, 80]
+      atr_multiplier: [1.5, 2.0, 2.5, 3.0, 4.0]
+      risk_per_trade: [0.005, 0.01, 0.02, 0.03]
+
+# ── Walk-Forward ─────────────────────────────────────────────
+walk_forward:
+  train_pct: 0.60
+  validation_pct: 0.20
+  test_pct: 0.20
+  n_splits: 3              # Number of rolling windows
+
+# ── Robustness ───────────────────────────────────────────────
+robustness:
+  monte_carlo_iterations: 1000
+  confidence_levels: [0.05, 0.25, 0.50, 0.75, 0.95]
+  sensitivity_variation_pct: 0.20   # ±20% around optimal
+
+# ── Reporting ────────────────────────────────────────────────
+reporting:
+  formats:
+    - html
+    - csv
+    - json
+  embed_charts: true        # Embed charts as base64 in HTML
+  chart_dpi: 150
+  chart_style: dark_background
