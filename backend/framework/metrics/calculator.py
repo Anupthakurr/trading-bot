@@ -12,8 +12,11 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+from functools import lru_cache
+
 import numpy as np
 import pandas as pd
+import yfinance as yf
 
 from framework.backtester.engine import BacktestResult
 from framework.backtester.order import Trade
@@ -50,6 +53,8 @@ class PerformanceMetrics:
     sortino_ratio: float = 0.0
     max_drawdown_pct: float = 0.0
     calmar_ratio: float = 0.0
+    alpha: float = 0.0
+    beta: float = 0.0
 
     # Time metrics
     avg_holding_bars: float = 0.0
@@ -104,12 +109,32 @@ class PerformanceMetrics:
             f"|  Sortino Ratio          : {self.sortino_ratio:>14.2f}   |",
             f"|  Max Drawdown           : {self.max_drawdown_pct:>14.2f}%  |",
             f"|  Calmar Ratio           : {self.calmar_ratio:>14.2f}   |",
+            f"|  Alpha (Jensen's)       : {self.alpha:>14.2f}%  |",
+            f"|  Beta                   : {self.beta:>14.2f}   |",
             "+--------------------------------------------------+",
             f"|  Avg Holding Time       : {self.avg_holding_time:>14s}   |",
             f"|  Total Commission       : ${self.total_commission:>14,.2f}   |",
             "+--------------------------------------------------+",
         ]
         return "\n".join(lines)
+
+
+@lru_cache(maxsize=10)
+def get_benchmark_returns(symbol: str, start: str, end: str) -> pd.Series:
+    """Fetch benchmark data and compute daily returns, with caching."""
+    try:
+        # yf.download can be noisy, suppress progress
+        df = yf.download(symbol, start=start, end=end, progress=False)
+        if df.empty:
+            return pd.Series(dtype=float)
+        # Handle multi-index columns in newer yfinance versions
+        close_col = df['Close'] if 'Close' in df.columns else df.iloc[:, 3] 
+        if isinstance(close_col, pd.DataFrame):
+            close_col = close_col.iloc[:, 0]
+        return close_col.pct_change().fillna(0)
+    except Exception as e:
+        logger.warning("Failed to fetch benchmark %s: %s", symbol, e)
+        return pd.Series(dtype=float)
 
 
 class MetricsCalculator:
@@ -126,14 +151,17 @@ class MetricsCalculator:
         self,
         annualization_factor: float = 252,
         risk_free_rate: float = 0.02,
+        benchmark_symbol: str = "SPY",
     ):
         """
         Args:
             annualization_factor: Number of bars per year for return scaling.
             risk_free_rate: Annual risk-free rate for Sharpe/Sortino.
+            benchmark_symbol: Benchmark ticker for Alpha/Beta.
         """
         self.annualization_factor = annualization_factor
         self.risk_free_rate = risk_free_rate
+        self.benchmark_symbol = benchmark_symbol
 
     def calculate(self, result: BacktestResult) -> PerformanceMetrics:
         """
@@ -234,6 +262,46 @@ class MetricsCalculator:
             m.calmar_ratio = m.annualized_return_pct / abs(m.max_drawdown_pct)
         else:
             m.calmar_ratio = float("inf") if m.annualized_return_pct > 0 else 0
+
+        # ── Alpha & Beta ─────────────────────────────────────
+        if result.data is not None and not result.data.empty and "Date" in result.data.columns:
+            try:
+                start_date = str(result.data["Date"].iloc[0])[:10]
+                # Add 1 day to end_date because yfinance end is exclusive
+                end_dt = pd.to_datetime(str(result.data["Date"].iloc[-1])[:10]) + pd.Timedelta(days=1)
+                end_date = end_dt.strftime("%Y-%m-%d")
+
+                bench_returns = get_benchmark_returns(self.benchmark_symbol, start_date, end_date)
+
+                if not bench_returns.empty:
+                    # Align dates
+                    strat_returns_df = pd.DataFrame({
+                        "Date": pd.to_datetime(result.data["Date"]),
+                        "StratRet": daily_returns.values
+                    }).set_index("Date")
+                    
+                    bench_returns_df = pd.DataFrame({"BenchRet": bench_returns})
+                    bench_returns_df.index = pd.to_datetime(bench_returns_df.index).tz_localize(None)
+                    
+                    merged = strat_returns_df.join(bench_returns_df, how="inner").fillna(0)
+                    
+                    if len(merged) > 1:
+                        cov_matrix = np.cov(merged["StratRet"], merged["BenchRet"])
+                        bench_var = np.var(merged["BenchRet"])
+                        
+                        if bench_var > 0:
+                            m.beta = float(cov_matrix[0, 1] / bench_var)
+                            
+                            bench_total_ret = (1 + merged["BenchRet"]).prod() - 1
+                            years = len(merged) / self.annualization_factor
+                            if years > 0:
+                                bench_ann_ret = ((1 + bench_total_ret) ** (1 / years)) - 1
+                                strat_ann_ret = m.annualized_return_pct / 100.0
+                                
+                                alpha_raw = strat_ann_ret - (self.risk_free_rate + m.beta * (bench_ann_ret - self.risk_free_rate))
+                                m.alpha = float(alpha_raw * 100)
+            except Exception as e:
+                logger.debug("Skipping Alpha/Beta calculation: %s", e)
 
         return m
 
