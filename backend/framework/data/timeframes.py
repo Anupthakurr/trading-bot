@@ -13,6 +13,7 @@ import pandas as pd
 
 class Timeframe(Enum):
     """Supported trading timeframes."""
+    M1  = "1m"
     M5  = "5m"
     M15 = "15m"
     H1  = "1h"
@@ -23,6 +24,7 @@ class Timeframe(Enum):
     def pandas_freq(self) -> str:
         """Return pandas-compatible frequency string."""
         mapping = {
+            "1m":  "1min",
             "5m":  "5min",
             "15m": "15min",
             "1h":  "1h",
@@ -35,6 +37,7 @@ class Timeframe(Enum):
     def yfinance_interval(self) -> str:
         """Return yfinance-compatible interval string."""
         mapping = {
+            "1m":  "1m",
             "5m":  "5m",
             "15m": "15m",
             "1h":  "1h",
@@ -52,6 +55,7 @@ class Timeframe(Enum):
     def annualization_factor(self) -> float:
         """Number of bars per year, used for annualizing returns."""
         factors = {
+            "1m":  252 * 6.5 * 60,   # ~98,280 bars/year (stocks)
             "5m":  252 * 6.5 * 12,   # ~19,656 bars/year (stocks)
             "15m": 252 * 6.5 * 4,    # ~6,552
             "1h":  252 * 6.5,        # ~1,638
@@ -64,6 +68,7 @@ class Timeframe(Enum):
     def display_name(self) -> str:
         """Human-readable name."""
         names = {
+            "1m":  "1 Minute",
             "5m":  "5 Minutes",
             "15m": "15 Minutes",
             "1h":  "1 Hour",

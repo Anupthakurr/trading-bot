@@ -11,6 +11,11 @@ frontend/node_modules/
 frontend/dist/
 frontend/build/
 .env
+backend/.env
+
+# DB
+*.db
+*.sqlite
 
 # OS
 .DS_Store

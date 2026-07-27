@@ -20,12 +20,11 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
-import matplotlib
-
-matplotlib.use("Agg")  # Non-interactive backend
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker as mticker
+
+plt.switch_backend("Agg")  # Non-interactive backend
 
 from framework.backtester.engine import BacktestResult
 from framework.metrics.calculator import PerformanceMetrics

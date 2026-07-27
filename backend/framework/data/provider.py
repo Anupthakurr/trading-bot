@@ -117,7 +117,7 @@ class YFinanceProvider(DataProvider):
         ticker = yf.Ticker(yf_symbol)
 
         # yfinance has max period limits for intraday data
-        if fetch_tf in (Timeframe.M5, Timeframe.M15):
+        if fetch_tf in (Timeframe.M1, Timeframe.M5, Timeframe.M15):
             # Max 60 days for 5m/15m
             df = ticker.history(
                 start=start, end=end,
