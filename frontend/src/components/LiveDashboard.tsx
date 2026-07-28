@@ -197,7 +197,7 @@ export const LiveDashboard: React.FC = () => {
   const labelStyle: React.CSSProperties = {
     display: 'block',
     marginBottom: '6px',
-    fontSize: '0.8rem',
+    fontSize: '0.95rem',
     fontWeight: 500,
     color: 'var(--text-secondary)',
     textTransform: 'uppercase',
@@ -411,7 +411,7 @@ export const LiveDashboard: React.FC = () => {
             </div>
             
             {showMarketInfo && (
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '16px' }}>
+              <div style={{ fontSize: '1.00rem', color: 'var(--text-secondary)', marginTop: '16px' }}>
                 <p style={{ marginBottom: '8px' }}>
                   <strong style={{ color: 'var(--text-primary)' }}>Indian Market (NSE/BSE)</strong><br />
                   Mon - Fri: 09:15 AM - 03:30 PM (IST)
@@ -419,7 +419,7 @@ export const LiveDashboard: React.FC = () => {
                 <p style={{ marginBottom: '8px' }}>
                   <strong style={{ color: 'var(--text-primary)' }}>US Market (NYSE/NASDAQ)</strong><br />
                   Mon - Fri: 07:00 PM - 01:30 AM (IST) <br/>
-                  <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>(08:00 PM - 02:30 AM in Winter)</span>
+                  <span style={{ fontSize: '0.90rem', opacity: 0.7 }}>(08:00 PM - 02:30 AM in Winter)</span>
                 </p>
                 <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
                 <p style={{ marginBottom: '8px' }}>
