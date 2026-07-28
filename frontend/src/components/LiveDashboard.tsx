@@ -386,11 +386,11 @@ export const LiveDashboard: React.FC = () => {
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
               <p style={{ marginBottom: '8px' }}>
                 <strong style={{ color: 'var(--text-primary)' }}>Indian Market (NSE/BSE)</strong><br />
-                09:15 AM - 03:30 PM (IST)
+                Mon - Fri: 09:15 AM - 03:30 PM (IST)
               </p>
               <p style={{ marginBottom: '8px' }}>
                 <strong style={{ color: 'var(--text-primary)' }}>US Market (NYSE/NASDAQ)</strong><br />
-                07:00 PM - 01:30 AM (IST) <br/>
+                Mon - Fri: 07:00 PM - 01:30 AM (IST) <br/>
                 <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>(08:00 PM - 02:30 AM in Winter)</span>
               </p>
               <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
