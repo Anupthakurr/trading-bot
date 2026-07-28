@@ -394,9 +394,16 @@ export const LiveDashboard: React.FC = () => {
                 <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>(08:00 PM - 02:30 AM in Winter)</span>
               </p>
               <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
+              <p style={{ marginBottom: '8px' }}>
+                <strong style={{ color: 'var(--text-primary)' }}>What is Algorithmic Trading?</strong><br />
+                Trading involves buying and selling financial assets (like stocks) to make a profit. Algorithmic trading automates this using math and rules.
+              </p>
               <p>
-                <strong style={{ color: 'var(--text-primary)' }}>Trading Bot</strong><br />
-                The bot evaluates your strategy using live data at the specified interval. Use <em>Mock Paper Trading</em> to test strategies risk-free.
+                <strong style={{ color: 'var(--text-primary)' }}>How to use this bot:</strong><br />
+                1. Select an asset ticker (e.g. <strong>AAPL</strong>).<br />
+                2. Choose a <strong>Strategy</strong> (e.g. SMA Crossover).<br />
+                3. Click <strong>Start Live Engine</strong>.<br />
+                The bot will automatically fetch live prices and execute Buy/Sell orders completely hands-free! Use <em>Mock Paper Trading</em> to test it safely.
               </p>
             </div>
           </div>
