@@ -4,7 +4,7 @@ import threading
 from typing import Dict, Any, Optional
 import datetime
 
-from framework.strategies.base import Strategy, Signal
+from framework.strategies.base import Strategy, Signal, StrategySignal
 from framework.data.provider import DataProvider
 from framework.data.timeframes import Timeframe
 from framework.execution.broker_adapter import BrokerAdapter
@@ -154,7 +154,7 @@ class LiveEngine:
         last_date = df['Date'].iloc[-1]
         
         if getattr(self, 'last_evaluated_bar', None) == last_date:
-            signal = Signal(Signal.HOLD)
+            signal = StrategySignal(action=Signal.HOLD, price=df['Close'].iloc[-1])
         else:
             signal = self.strategy.next(last_idx, df)
             self.last_evaluated_bar = last_date
