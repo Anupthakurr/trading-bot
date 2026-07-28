@@ -421,6 +421,9 @@ export const LiveDashboard: React.FC = () => {
                   Mon - Fri: 07:00 PM - 01:30 AM (IST) <br/>
                   <span style={{ fontSize: '0.90rem', opacity: 0.7 }}>(08:00 PM - 02:30 AM in Winter)</span>
                 </p>
+                <div style={{ marginBottom: '12px', fontSize: '0.90rem', background: 'rgba(56, 189, 248, 0.1)', padding: '8px 12px', borderRadius: '4px', borderLeft: '3px solid var(--accent-color)' }}>
+                  <strong>Why is it stuck on HOLD?</strong> If you trade US stocks (like AAPL) during Indian daytime hours, the US market is asleep! The bot will continuously output <strong>HOLD</strong> because prices aren't changing. To see live daytime action, trade Indian tickers (like <strong>RELIANCE.NS</strong>) during IST hours.
+                </div>
                 <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
                 <p style={{ marginBottom: '8px' }}>
                   <strong style={{ color: 'var(--text-primary)' }}>What is Algorithmic Trading?</strong><br />
