@@ -189,7 +189,9 @@ export const LiveDashboard: React.FC = () => {
   const formatTime = (ts: string | null) => {
     if (!ts) return '—';
     try {
-      const d = new Date(ts);
+      // Append Z to parse SQLite datetime string as UTC
+      const dateStr = ts.includes('T') ? ts : ts.replace(' ', 'T') + 'Z';
+      const d = new Date(dateStr);
       return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     } catch {
       return ts;
@@ -398,12 +400,19 @@ export const LiveDashboard: React.FC = () => {
                 <strong style={{ color: 'var(--text-primary)' }}>What is Algorithmic Trading?</strong><br />
                 Trading involves buying and selling financial assets (like stocks) to make a profit. Algorithmic trading automates this using math and rules.
               </p>
-              <p>
+              <p style={{ marginBottom: '8px' }}>
                 <strong style={{ color: 'var(--text-primary)' }}>How to use this bot:</strong><br />
                 1. Select an asset ticker (e.g. <strong>AAPL</strong>).<br />
                 2. Choose a <strong>Strategy</strong> (e.g. SMA Crossover).<br />
                 3. Click <strong>Start Live Engine</strong>.<br />
                 The bot will automatically fetch live prices and execute Buy/Sell orders completely hands-free! Use <em>Mock Paper Trading</em> to test it safely.
+              </p>
+              <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
+              <p>
+                <strong style={{ color: 'var(--text-primary)' }}>Engine Signals:</strong><br />
+                <strong style={{ color: 'var(--success)' }}>BUY</strong>: The strategy detected an upward trend and bought shares.<br />
+                <strong style={{ color: 'var(--danger)' }}>SELL</strong>: The strategy detected a downward trend (or hit a stop-loss) and sold shares.<br />
+                <strong style={{ color: 'var(--text-secondary)' }}>HOLD</strong>: The market is flat or closed. The bot is actively watching but taking no action.
               </p>
             </div>
           </div>
