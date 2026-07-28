@@ -16,7 +16,7 @@ function App() {
   const [results, setResults] = useState<any>(null);
   const [strategyLabel, setStrategyLabel] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (activeTab === 'analytics' && !results) {
       axios.get('http://localhost:8000/api/live/analytics')
         .then(res => {

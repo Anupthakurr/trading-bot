@@ -4,7 +4,6 @@ import {
   TrendingDown, 
   Activity, 
   PieChart, 
-  Percent, 
   Target, 
   ShieldAlert, 
   Zap,
@@ -238,7 +237,7 @@ export const Analytics: React.FC<AnalyticsProps> = ({ results }) => {
                     verticalAlign="bottom" 
                     height={36} 
                     iconType="circle"
-                    formatter={(value, entry: any) => <span style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>{value}</span>}
+                    formatter={(value) => <span style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>{value}</span>}
                   />
                 </RePieChart>
               </ResponsiveContainer>
