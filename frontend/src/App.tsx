@@ -5,8 +5,9 @@ import { ControlPanel } from './components/ControlPanel';
 import { MetricsCard } from './components/MetricsCard';
 import { EquityChart } from './components/EquityChart';
 import { LiveDashboard } from './components/LiveDashboard';
+import { Analytics } from './components/Analytics';
 
-type Tab = 'backtest' | 'live';
+type Tab = 'backtest' | 'live' | 'analytics';
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('backtest');
@@ -43,6 +44,8 @@ function App() {
         <p>
           {activeTab === 'backtest'
             ? 'Algorithmic Trading Backtest Simulator'
+            : activeTab === 'analytics'
+            ? 'Advanced Quantitative Analytics'
             : 'Live Paper Trading Dashboard'}
         </p>
       </header>
@@ -55,6 +58,13 @@ function App() {
         >
           <BarChart3 size={16} />
           Backtest
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'analytics' ? 'tab-active' : ''}`}
+          onClick={() => setActiveTab('analytics')}
+        >
+          <Activity size={16} />
+          Analytics
         </button>
         <button
           className={`tab-btn ${activeTab === 'live' ? 'tab-active' : ''}`}
@@ -138,6 +148,10 @@ function App() {
             </main>
           </div>
         </>
+      ) : activeTab === 'analytics' ? (
+        <main>
+          <Analytics results={results} />
+        </main>
       ) : (
         <LiveDashboard />
       )}

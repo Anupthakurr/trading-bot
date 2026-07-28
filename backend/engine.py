@@ -135,23 +135,47 @@ def run_backtest(
     
     # Daily returns of the strategy equity
     strat_daily_returns = data['Equity'].pct_change().fillna(0)
+    market_returns = data['Asset_Return'].fillna(0)
     
     risk_free_rate = 0.02
     daily_rf = risk_free_rate / 252
     excess_returns = strat_daily_returns - daily_rf
+    
     if excess_returns.std() > 0:
         sharpe_ratio = np.sqrt(252) * (excess_returns.mean() / excess_returns.std())
     else:
         sharpe_ratio = 0.0
         
+    downside_returns = excess_returns[excess_returns < 0]
+    downside_std = downside_returns.std()
+    if pd.isna(downside_std) or downside_std == 0:
+        sortino_ratio = 0.0
+    else:
+        sortino_ratio = np.sqrt(252) * (excess_returns.mean() / downside_std)
+        
     cumulative_max = data['Equity'].cummax()
     drawdown = (data['Equity'] - cumulative_max) / cumulative_max
     max_drawdown = drawdown.min()
+    data['Drawdown'] = drawdown * 100
+    
+    years = len(data) / 252
+    annualized_return = ((data['Equity'].iloc[-1] / initial_capital) ** (1 / years)) - 1 if years > 0 and (data['Equity'].iloc[-1] / initial_capital) > 0 else 0
+    market_annualized = ((data['Buy_and_Hold_Equity'].iloc[-1] / initial_capital) ** (1 / years)) - 1 if years > 0 and (data['Buy_and_Hold_Equity'].iloc[-1] / initial_capital) > 0 else 0
+    
+    calmar_ratio = annualized_return / abs(max_drawdown) if max_drawdown < 0 else 0
+    
+    var_market = np.var(market_returns)
+    beta = np.cov(strat_daily_returns, market_returns)[0][1] / var_market if var_market > 0 else 1.0
+    alpha = annualized_return - (risk_free_rate + beta * (market_annualized - risk_free_rate))
+    
+    winning_days = len(strat_daily_returns[strat_daily_returns > 0])
+    losing_days = len(strat_daily_returns[strat_daily_returns < 0])
+    win_rate = winning_days / (winning_days + losing_days) if (winning_days + losing_days) > 0 else 0
     
     # Fill NaN for JSON serialization
     data.fillna(0, inplace=True)
     
-    chart_data = data[['Date', 'Close', 'SMA_short', 'SMA_long', 'Signal', 'Position', 'Equity']].to_dict(orient='records')
+    chart_data = data[['Date', 'Close', 'SMA_short', 'SMA_long', 'Signal', 'Position', 'Equity', 'Drawdown']].to_dict(orient='records')
     
     return {
         "metrics": {
@@ -160,7 +184,14 @@ def run_backtest(
             "total_return_pct": round(total_return * 100, 2),
             "buy_and_hold_return_pct": round(buy_hold_return * 100, 2),
             "sharpe_ratio": round(sharpe_ratio, 2),
-            "max_drawdown_pct": round(max_drawdown * 100, 2)
+            "sortino_ratio": round(sortino_ratio, 2),
+            "calmar_ratio": round(calmar_ratio, 2),
+            "max_drawdown_pct": round(max_drawdown * 100, 2),
+            "alpha_pct": round(alpha * 100, 2),
+            "beta": round(beta, 2),
+            "win_rate_pct": round(win_rate * 100, 2),
+            "winning_trades": winning_days,
+            "losing_trades": losing_days
         },
         "chart_data": chart_data
     }
