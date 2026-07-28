@@ -151,7 +151,13 @@ class LiveEngine:
         
         # 3. Get signal for the *last* fully closed bar
         last_idx = len(df) - 1
-        signal = self.strategy.next(last_idx, df)
+        last_date = df['Date'].iloc[-1]
+        
+        if getattr(self, 'last_evaluated_bar', None) == last_date:
+            signal = Signal(Signal.HOLD)
+        else:
+            signal = self.strategy.next(last_idx, df)
+            self.last_evaluated_bar = last_date
         
         # 4. Check current open positions from broker
         open_positions = self.broker.get_open_positions()
