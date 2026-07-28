@@ -12,6 +12,8 @@ import {
   AlertTriangle,
   Terminal,
   RefreshCw,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 const API_BASE = 'http://localhost:8000';
@@ -81,6 +83,8 @@ export const LiveDashboard: React.FC = () => {
   const [isPolling, setIsPolling] = useState(false);
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const logContainerRef = useRef<HTMLDivElement>(null);
+
+  const [showMarketInfo, setShowMarketInfo] = useState(false);
 
   const totalActive = Object.keys(activeEngines).length;
   const isRunning = totalActive > 0;
@@ -381,40 +385,49 @@ export const LiveDashboard: React.FC = () => {
 
           {/* Market Information */}
           <div className="glass-panel" style={{ marginTop: '16px' }}>
-            <h4 style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Clock size={16} style={{ color: 'var(--accent-color)' }} />
-              Market Information
-            </h4>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              <p style={{ marginBottom: '8px' }}>
-                <strong style={{ color: 'var(--text-primary)' }}>Indian Market (NSE/BSE)</strong><br />
-                Mon - Fri: 09:15 AM - 03:30 PM (IST)
-              </p>
-              <p style={{ marginBottom: '8px' }}>
-                <strong style={{ color: 'var(--text-primary)' }}>US Market (NYSE/NASDAQ)</strong><br />
-                Mon - Fri: 07:00 PM - 01:30 AM (IST) <br/>
-                <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>(08:00 PM - 02:30 AM in Winter)</span>
-              </p>
-              <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
-              <p style={{ marginBottom: '8px' }}>
-                <strong style={{ color: 'var(--text-primary)' }}>What is Algorithmic Trading?</strong><br />
-                Trading involves buying and selling financial assets (like stocks) to make a profit. Algorithmic trading automates this using math and rules.
-              </p>
-              <p style={{ marginBottom: '8px' }}>
-                <strong style={{ color: 'var(--text-primary)' }}>How to use this bot:</strong><br />
-                1. Select an asset ticker (e.g. <strong>AAPL</strong>).<br />
-                2. Choose a <strong>Strategy</strong> (e.g. SMA Crossover).<br />
-                3. Click <strong>Start Live Engine</strong>.<br />
-                The bot will automatically fetch live prices and execute Buy/Sell orders completely hands-free! Use <em>Mock Paper Trading</em> to test it safely.
-              </p>
-              <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
-              <p>
-                <strong style={{ color: 'var(--text-primary)' }}>Engine Signals:</strong><br />
-                <strong style={{ color: 'var(--success)' }}>BUY</strong>: The strategy detected an upward trend and bought shares.<br />
-                <strong style={{ color: 'var(--danger)' }}>SELL</strong>: The strategy detected a downward trend (or hit a stop-loss) and sold shares.<br />
-                <strong style={{ color: 'var(--text-secondary)' }}>HOLD</strong>: The market is flat or closed. The bot is actively watching but taking no action.
-              </p>
+            <div 
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+              onClick={() => setShowMarketInfo(!showMarketInfo)}
+            >
+              <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                <Clock size={16} style={{ color: 'var(--accent-color)' }} />
+                Market Information
+              </h4>
+              {showMarketInfo ? <ChevronUp size={16} style={{ color: 'var(--text-secondary)' }} /> : <ChevronDown size={16} style={{ color: 'var(--text-secondary)' }} />}
             </div>
+            
+            {showMarketInfo && (
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '16px' }}>
+                <p style={{ marginBottom: '8px' }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>Indian Market (NSE/BSE)</strong><br />
+                  Mon - Fri: 09:15 AM - 03:30 PM (IST)
+                </p>
+                <p style={{ marginBottom: '8px' }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>US Market (NYSE/NASDAQ)</strong><br />
+                  Mon - Fri: 07:00 PM - 01:30 AM (IST) <br/>
+                  <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>(08:00 PM - 02:30 AM in Winter)</span>
+                </p>
+                <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
+                <p style={{ marginBottom: '8px' }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>What is Algorithmic Trading?</strong><br />
+                  Trading involves buying and selling financial assets (like stocks) to make a profit. Algorithmic trading automates this using math and rules.
+                </p>
+                <p style={{ marginBottom: '8px' }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>How to use this bot:</strong><br />
+                  1. Select an asset ticker (e.g. <strong>AAPL</strong>).<br />
+                  2. Choose a <strong>Strategy</strong> (e.g. SMA Crossover).<br />
+                  3. Click <strong>Start Live Engine</strong>.<br />
+                  The bot will automatically fetch live prices and execute Buy/Sell orders completely hands-free! Use <em>Mock Paper Trading</em> to test it safely.
+                </p>
+                <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
+                <p>
+                  <strong style={{ color: 'var(--text-primary)' }}>Engine Signals:</strong><br />
+                  <strong style={{ color: 'var(--success)' }}>BUY</strong>: The strategy detected an upward trend and bought shares.<br />
+                  <strong style={{ color: 'var(--danger)' }}>SELL</strong>: The strategy detected a downward trend (or hit a stop-loss) and sold shares.<br />
+                  <strong style={{ color: 'var(--text-secondary)' }}>HOLD</strong>: The market is flat or closed. The bot is actively watching but taking no action.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
