@@ -434,6 +434,16 @@ export const LiveDashboard: React.FC = () => {
                   The bot will automatically fetch live prices and execute Buy/Sell orders completely hands-free! Use <em>Mock Paper Trading</em> to test it safely.
                 </p>
                 <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
+                <p style={{ marginBottom: '8px' }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>Terminology:</strong><br />
+                  <strong style={{ color: 'var(--text-primary)' }}>Ticker</strong>: A short symbol identifying a company (e.g., AAPL for Apple).<br />
+                  <strong style={{ color: 'var(--text-primary)' }}>Broker</strong>: The platform making trades. "Mock Paper Trading" uses fake money for safe testing.<br />
+                  <strong style={{ color: 'var(--text-primary)' }}>Strategy</strong>: The math rules the bot follows to decide when to buy or sell.<br />
+                  <strong style={{ color: 'var(--text-primary)' }}>Interval</strong>: How often (in seconds) the bot checks the market for new prices.<br />
+                  <strong style={{ color: 'var(--text-primary)' }}>Risk / Trade</strong>: The max percentage of your balance to risk on one trade.<br />
+                  <strong style={{ color: 'var(--text-primary)' }}>Account Balance</strong>: Your total available funds (real or mock) to trade with.
+                </p>
+                <hr style={{ border: 'none', borderTop: '1px solid var(--glass-border)', margin: '12px 0' }} />
                 <p>
                   <strong style={{ color: 'var(--text-primary)' }}>Engine Signals:</strong><br />
                   <strong style={{ color: 'var(--success)' }}>BUY</strong>: The strategy detected an upward trend and bought shares.<br />
