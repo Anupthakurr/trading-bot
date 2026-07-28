@@ -216,6 +216,11 @@ Make sure you have both the backend (`uvicorn`) and frontend (`npm run dev`) run
 - **Active Monitoring:** The dashboard streams real-time state from your backend SQLite database, displaying Open Positions, P&L, Order History, and Account Balance.
 - **Activity Log:** A live terminal feed streams every execution event, rejection reason, and tick logic evaluation directly to your browser.
 
+### 3. Market Timings & Live Data
+- **Indian Market (NSE/BSE)**: Mon - Fri: 09:15 AM - 03:30 PM (IST).
+- **US Market (NYSE/NASDAQ)**: Mon - Fri: 07:00 PM - 01:30 AM (IST) *(08:00 PM - 02:30 AM in Winter)*.
+- **HOLD Signals**: If you attempt to run the Live Engine on a US stock (like `AAPL`) during Indian daytime hours, the bot will continuously output a **HOLD** signal because the market is closed and prices are not updating. To test the bot during IST daytime, use Indian tickers like `RELIANCE.NS`.
+
 ---
 
 ## 🧠 Trading Strategies
