@@ -140,7 +140,9 @@ class LiveEngine:
             return
             
         if df.empty or len(df) < 50:
-            logger.warning(f"Not enough data to calculate indicators for {self.ticker}")
+            msg = f"Not enough data to calculate indicators for {self.ticker}. (Need 50 bars)"
+            logger.warning(msg)
+            self.db.insert_log("WARNING", msg)
             return
 
         # 2. Pre-calculate indicators
@@ -232,6 +234,9 @@ class LiveEngine:
                 reason = resp.get("reason", "Unknown")
                 logger.error(f"Order REJECTED: {reason}")
                 self.db.insert_log("ERROR", f"ORDER SELL {self.ticker} REJECTED: {reason}")
+        else:
+            # Heartbeat log so UI shows activity
+            self.db.insert_log("INFO", f"Evaluated tick. Price: {current_price}. Signal: {signal.action.name}")
 
         # Update balance
         bal = self.broker.get_account_balance()
