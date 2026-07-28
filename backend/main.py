@@ -178,5 +178,11 @@ def get_live_logs(limit: int = 100):
     logs = db_manager.get_logs(limit=limit)
     return {"logs": logs}
 
+@app.post("/api/live/clear_logs")
+def clear_live_logs():
+    """Clear all engine logs."""
+    db_manager.clear_logs()
+    return {"message": "Logs cleared successfully."}
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

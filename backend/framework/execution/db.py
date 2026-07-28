@@ -88,6 +88,11 @@ class DatabaseManager:
             conn.execute("INSERT INTO logs (level, message) VALUES (?, ?)", (level, message))
             conn.commit()
             
+    def clear_logs(self):
+        with self.get_connection() as conn:
+            conn.execute("DELETE FROM logs")
+            conn.commit()
+            
     def update_account_balance(self, balance: float):
         with self.get_connection() as conn:
             # Upsert logic for simple single row account tracking

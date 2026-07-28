@@ -14,6 +14,7 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
+  Trash2,
 } from 'lucide-react';
 
 const API_BASE = 'http://localhost:8000';
@@ -177,6 +178,19 @@ export const LiveDashboard: React.FC = () => {
       });
     } finally {
       setIsStopping(false);
+    }
+  };
+
+  const handleClearLogs = async () => {
+    try {
+      await axios.post(`${API_BASE}/api/live/clear_logs`);
+      setActionMessage({ type: 'success', text: 'Logs cleared successfully' });
+      setLogs([]); // instantly clear in UI
+    } catch (err: any) {
+      setActionMessage({
+        type: 'error',
+        text: err.response?.data?.detail || err.message || 'Failed to clear logs',
+      });
     }
   };
 
@@ -546,11 +560,23 @@ export const LiveDashboard: React.FC = () => {
 
           {/* Activity Log */}
           <div className="glass-panel">
-            <h3 style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Terminal size={18} style={{ color: 'var(--accent-color)' }} />
-              Activity Log
-              <span className="badge">{logs.length}</span>
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+                <Terminal size={18} style={{ color: 'var(--accent-color)' }} />
+                Activity Log
+                <span className="badge">{logs.length}</span>
+              </h3>
+              {logs.length > 0 && (
+                <button 
+                  className="btn-icon" 
+                  onClick={handleClearLogs} 
+                  title="Clear Logs"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
             <div className="log-container" ref={logContainerRef}>
               {logs.length > 0 ? (
                 logs.map((log) => (
