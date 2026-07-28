@@ -79,6 +79,25 @@ export const Analytics: React.FC<AnalyticsProps> = ({ results }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
+      {results.is_live && (
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '6px 14px',
+          borderRadius: '20px',
+          background: 'rgba(16, 185, 129, 0.12)',
+          border: '1px solid rgba(16, 185, 129, 0.25)',
+          fontSize: '0.85rem',
+          fontWeight: 600,
+          color: 'var(--success)',
+          alignSelf: 'flex-start'
+        }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)', boxShadow: '0 0 8px var(--success)' }}></span>
+          Live Trading Mode
+        </div>
+      )}
+
       {/* KPI Grid */}
       <div style={{
         display: 'grid',

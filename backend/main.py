@@ -184,5 +184,75 @@ def clear_live_logs():
     db_manager.clear_logs()
     return {"message": "Logs cleared successfully."}
 
+@app.get("/api/live/analytics")
+def get_live_analytics():
+    """Calculate and return live analytics from closed trades."""
+    trades = db_manager.get_trades(limit=1000)
+    trades.reverse() # Sort chronologically
+    
+    current_balance = db_manager.get_account_balance()
+    if current_balance <= 0:
+        current_balance = 100000.0 # fallback
+        
+    total_pnl = sum(t['pnl'] for t in trades)
+    initial_capital = current_balance - total_pnl
+    
+    chart_data = []
+    equity = initial_capital
+    cumulative_max = equity
+    
+    winning_trades = 0
+    losing_trades = 0
+    max_drawdown = 0.0
+    
+    for t in trades:
+        pnl = t['pnl']
+        if pnl > 0:
+            winning_trades += 1
+        elif pnl < 0:
+            losing_trades += 1
+            
+        equity += pnl
+        if equity > cumulative_max:
+            cumulative_max = equity
+            
+        drawdown = (equity - cumulative_max) / cumulative_max if cumulative_max > 0 else 0
+        if drawdown < max_drawdown:
+            max_drawdown = drawdown
+            
+        chart_data.append({
+            "Date": t['closed_at'],
+            "Equity": round(equity, 2),
+            "Drawdown": round(drawdown * 100, 2),
+            "Signal": 0,
+            "Position": 0,
+            "SMA_short": 0,
+            "SMA_long": 0,
+            "Close": t['exit_price']
+        })
+        
+    win_rate = winning_trades / (winning_trades + losing_trades) if (winning_trades + losing_trades) > 0 else 0
+    total_return = (equity / initial_capital) - 1 if initial_capital > 0 else 0
+    
+    return {
+        "metrics": {
+            "initial_capital": round(initial_capital, 2),
+            "final_equity": round(equity, 2),
+            "total_return_pct": round(total_return * 100, 2),
+            "buy_and_hold_return_pct": 0,
+            "sharpe_ratio": 0,
+            "sortino_ratio": 0,
+            "calmar_ratio": 0,
+            "max_drawdown_pct": round(max_drawdown * 100, 2),
+            "alpha_pct": 0,
+            "beta": 0,
+            "win_rate_pct": round(win_rate * 100, 2),
+            "winning_trades": winning_trades,
+            "losing_trades": losing_trades
+        },
+        "chart_data": chart_data,
+        "is_live": True
+    }
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

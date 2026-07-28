@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Activity, DollarSign, TrendingUp, AlertTriangle, BarChart3, Zap } from 'lucide-react';
 import { ControlPanel } from './components/ControlPanel';
@@ -15,6 +15,19 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<any>(null);
   const [strategyLabel, setStrategyLabel] = useState('');
+
+  React.useEffect(() => {
+    if (activeTab === 'analytics' && !results) {
+      axios.get('http://localhost:8000/api/live/analytics')
+        .then(res => {
+          if (res.data && res.data.metrics) {
+            setResults(res.data);
+            setStrategyLabel('Live Trading History');
+          }
+        })
+        .catch(err => console.error('Failed to fetch live analytics', err));
+    }
+  }, [activeTab, results]);
 
   const STRATEGY_NAMES: Record<number, string> = {
     1: 'V1 — SMA Crossover',
