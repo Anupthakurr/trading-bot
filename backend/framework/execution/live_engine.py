@@ -129,14 +129,15 @@ class LiveEngine:
                 self.db.insert_log("WARNING", msg)
                 return
         
-        # 1. Fetch recent data (e.g., last 10 days)
+        # 1. Fetch recent data (max 5 days for 1m yfinance limits)
         end = datetime.datetime.now().strftime("%Y-%m-%d")
-        start = (datetime.datetime.now() - datetime.timedelta(days=10)).strftime("%Y-%m-%d")
+        start = (datetime.datetime.now() - datetime.timedelta(days=5)).strftime("%Y-%m-%d")
         
         try:
             df = self.data_provider.fetch(self.ticker, self.timeframe, start, end)
         except ValueError as e:
             logger.error(f"Data fetch error: {e}")
+            self.db.insert_log("ERROR", f"Data fetch error: {e}")
             return
             
         if df.empty or len(df) < 50:
