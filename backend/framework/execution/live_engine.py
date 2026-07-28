@@ -56,9 +56,10 @@ class LiveEngine:
         
         # Connect to broker
         if not self.broker.connect():
-            logger.error("Failed to connect to broker. Aborting.")
+            error_msg = "Failed to connect to broker. Check your API credentials. Aborting."
+            logger.error(error_msg)
             self.is_running = False
-            return
+            raise ConnectionError(error_msg)
             
         # Log initial balance
         bal = self.broker.get_account_balance()
