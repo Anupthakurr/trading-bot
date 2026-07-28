@@ -237,7 +237,7 @@ class LiveEngine:
                 self.db.insert_log("ERROR", f"ORDER SELL {self.ticker} REJECTED: {reason}")
         else:
             # Heartbeat log so UI shows activity
-            self.db.insert_log("INFO", f"Evaluated tick. Price: {current_price}. Signal: {signal.action.name}")
+            self.db.insert_log("INFO", f"Evaluated tick. Price: {current_price:.2f}. Signal: {signal.action.name}")
 
         # Update balance
         bal = self.broker.get_account_balance()
