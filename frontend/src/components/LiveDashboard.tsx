@@ -331,7 +331,7 @@ export const LiveDashboard: React.FC = () => {
                   <input
                     type="number"
                     min="0.1"
-                    max="10"
+                    max="100"
                     step="0.1"
                     value={riskPerTrade}
                     onChange={(e) => setRiskPerTrade(e.target.value)}
